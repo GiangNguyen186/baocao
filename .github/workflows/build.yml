@@ -1,13 +1,32 @@
-name: Build LaTeX PDF
+
+name: Build LaTeX Preview
 
 on:
   push:
-  pull_request:
+    branches:
+      - part1
+      - part2
+      - part3
+      - part4
+      - part5
+      - part6
+      - part7
+    paths-ignore:
+      - preview.pdf
+
   workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: latex-preview-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,9 +37,15 @@ jobs:
           root_file: main.tex
           latexmk_use_xelatex: true
 
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: baocao-pdf
-          path: main.pdf
+      - name: Save preview PDF
+        run: cp main.pdf preview.pdf
 
+      - name: Commit preview to current branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add preview.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m "Update PDF preview"
+            git push
+          fi
