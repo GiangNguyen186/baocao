@@ -1,0 +1,154 @@
+%% ============================================================
+%%  preamble.tex  -  Cấu hình chung cho toàn bộ báo cáo
+%%  Biên dịch bằng XeLaTeX (latexmk -xelatex main.tex)
+%%  CHỈ NGƯỜI QUẢN LÝ REPO ĐƯỢC SỬA FILE NÀY.
+%%  Cần thêm gói/lệnh mới -> nhắn người quản lý.
+%% ============================================================
+
+%% ---------- 1. Thông tin đề tài (dùng lại ở trang bìa, PDF metadata) ----------
+\newcommand{\tendetai}{XÂY DỰNG HỆ THỐNG CUNG CẤP NƯỚC SẠCH QUY MÔ NHỎ CHO MỘT CỤM DÂN CƯ TẠI KHU VỰC TÂN PHÚ ĐÔNG, TỈNH TIỀN GIANG}
+
+%% ---------- 2. Font + tiếng Việt ----------
+\usepackage{fontspec}
+% Dùng Times New Roman nếu máy có (compile local), không có thì dùng
+% TeX Gyre Termes (tương đương Times, có sẵn trên GitHub Actions).
+\IfFontExistsTF{Times New Roman}{%
+  \setmainfont{Times New Roman}%
+}{%
+  \setmainfont{TeX Gyre Termes}%
+}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{TeX Gyre Cursor}[Scale=MatchLowercase]
+
+% polyglossia (không dùng babel) vì babel tiếng Việt không có sẵn trên mọi bản TeX Live
+\usepackage{polyglossia}
+\setmainlanguage{vietnamese}
+% Đổi tên một số mục tự sinh cho khớp mẫu báo cáo
+\addto\captionsvietnamese{%
+  \renewcommand{\contentsname}{Mục lục}%
+  \renewcommand{\listfigurename}{Danh mục hình ảnh}%
+  \renewcommand{\listtablename}{Danh mục bảng}%
+  \renewcommand{\bibname}{Tài liệu tham khảo}%
+  \renewcommand{\figurename}{Hình}%
+  \renewcommand{\tablename}{Bảng}%
+}
+
+%% ---------- 3. Bố cục trang ----------
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=3cm, right=2cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.3}                 % giãn dòng 1.3
+\usepackage{indentfirst}         % thụt đầu dòng cả đoạn đầu tiên
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{4pt plus 1pt}
+
+%% ---------- 4. Màu, bảng biểu, danh sách ----------
+\usepackage[table,dvipsnames]{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}           % bảng dài nhiều trang (WBS, ngân sách...)
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{adjustbox}           % co bảng/hình quá rộng: \adjustbox{max width=\textwidth}{...}
+\renewcommand{\arraystretch}{1.25}
+
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=*}
+\setlist[itemize]{topsep=3pt, itemsep=2pt}
+\setlist[enumerate]{topsep=3pt, itemsep=2pt}
+
+%% ---------- 5. Toán, đơn vị ----------
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{
+  output-decimal-marker = {,},   % 1,5 (dấu phẩy thập phân)
+  group-separator       = {.},   % 1.000.000 (dấu chấm ngăn cách hàng nghìn)
+  group-minimum-digits  = 4,
+  per-mode              = symbol,
+}
+\DeclareSIUnit{\ngay}{ngày}
+\DeclareSIUnit{\ho}{hộ}
+\DeclareSIUnit{\nguoi}{người}
+\newcommand{\VND}{\,VNĐ}
+% Ví dụ: \SI{200}{\liter\per\ngay}, \SI{50}{\ho}, \num{150000000}\VND
+
+%% ---------- 6. Hình ảnh ----------
+\usepackage{graphicx}
+\graphicspath{{figures/}}        % ghi: \includegraphics{part3/gantt.png}
+\usepackage{float}               % dùng được [H]
+\usepackage{pdflscape}           % trang ngang: \begin{landscape}...\end{landscape}
+\usepackage[font=small, labelfont=bf, labelsep=period]{caption}
+\usepackage{subcaption}
+
+%% ---------- 7. Vẽ sơ đồ: WBS, Gantt, mạng công việc ----------
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc, fit, backgrounds}
+\usepackage{pgfgantt}            % biểu đồ Gantt
+\usepackage[edges]{forest}       % cây phân rã công việc (WBS)
+\usepackage{pgffor}
+
+%% ---------- 8. Tiêu đề chương/mục (theo mục lục: "2.1. Tên mục") ----------
+\usepackage{titlesec}
+\titleformat{\chapter}[block]
+  {\centering\bfseries\fontsize{16}{20}\selectfont}
+  {\MakeUppercase{\chaptername}~\thechapter:}{0.5em}
+  {\MakeUppercase}
+\titleformat{name=\chapter, numberless}[block]
+  {\centering\bfseries\fontsize{16}{20}\selectfont}
+  {}{0pt}{\MakeUppercase}
+\titlespacing*{\chapter}{0pt}{-10pt}{24pt}
+
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{14}{17}\selectfont}{\thesection.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries\fontsize{13}{16}\selectfont}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\itshape\fontsize{12}{15}\selectfont}{\thesubsubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{14pt plus 2pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt plus 2pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{8pt plus 2pt}{3pt}
+
+\setcounter{secnumdepth}{3}      % đánh số đến 3.2.1.1 nếu cần
+\setcounter{tocdepth}{2}         % mục lục hiện đến 3.2.1
+
+%% ---------- 9. Đầu trang / chân trang ----------
+\usepackage{fancyhdr}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter.\ #1}{}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\itshape\leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{%          % trang đầu chương: chỉ có số trang
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+%% ---------- 10. Liên kết, URL, PDF metadata ----------
+\usepackage{xurl}                % cho phép ngắt dòng URL dài
+\usepackage[unicode]{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = blue!50!black,
+  pdftitle   = {Xây dựng hệ thống cung cấp nước sạch quy mô nhỏ cho một cụm dân cư tại khu vực Tân Phú Đông, tỉnh Tiền Giang},
+  pdflang    = {vi},
+}
+\usepackage{bookmark}
+
+%% ---------- 11. Lệnh tiện ích dùng chung ----------
+% Đánh dấu chỗ chưa viết xong (hiện chữ đỏ, dễ tìm): \todo{bổ sung số liệu}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+%% ---------- 12. (TÙY CHỌN) Tài liệu tham khảo bằng biblatex ----------
+%% Bỏ dấu % ở khối dưới nếu cả nhóm dùng file .bib riêng (bib/part1.bib ... part7.bib),
+%% rồi thêm \printbibliography trước \end{document} trong main.tex.
+%% Mỗi người đặt khóa trích dẫn có tiền tố phần, ví dụ: \cite{p3-pmbok}.
+%
+% \usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+% \foreach \i in {1,...,7}{%
+%   \IfFileExists{bib/part\i.bib}{\addbibresource{bib/part\i.bib}}{}%
+% }
